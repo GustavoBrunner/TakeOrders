@@ -13,7 +13,7 @@ namespace Controller.Observer
         /// <summary>
         /// Lista de observadores que esse objeto terá
         /// </summary>
-        List<IObserver> observers;
+        protected List<IObserver> observers;
         protected virtual void Start() { }
         protected virtual void Update() { }
         protected virtual void Awake() 
