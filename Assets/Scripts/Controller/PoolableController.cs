@@ -10,11 +10,11 @@ namespace Controller
     /// que surgirão ao longo do jogo. Ele também ligará e desligará todos eles, de acordo
     /// com o necessário.
     /// </summary>
-    public class PoolableController 
+    public class PoolableController
     {
         private static List<GameObject> prefabs = new List<GameObject>();
         private static List<IPoolable> poolables = new List<IPoolable>();
-
+        
         /// <summary>
         /// Responsável por receber um prefab qualquer, e adicionar ele à lista
         /// dentro da função será verificado se esse prefab é um poolable, se for, ele será adicionado à lista
@@ -29,7 +29,7 @@ namespace Controller
             if(pool != null)
             {
                 poolables.Add(pool);
-                Debug.Log($"Pool list: {poolables.Count}");
+                Debug.Log($"Pool list: {pool.Phase}");
             }
         }
         //Mesma coisa que o anterior, porém ele recebe um array de gameobject, caso seja necessário.
@@ -69,7 +69,20 @@ namespace Controller
             {
                 if (pool.Phase == phase)
                     pool.TurnOn();
+                //switch (phase)
+                //{
+                //    case GamePhases.none:
+                //        break;
+                //    case GamePhases.first:
+
+                //        Debug.Log("Ligando poolables");
+                //        break;
+                //    default:
+                //        break;
+                //}
+
             }
+            
         }
     }
 }

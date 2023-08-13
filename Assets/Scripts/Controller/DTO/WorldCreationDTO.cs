@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 namespace Controller.Phase
 {
     [CreateAssetMenu(fileName ="WorldDTO", menuName ="DTO/WorldDTO")]
@@ -10,6 +9,7 @@ namespace Controller.Phase
     /// </summary>
     public class WorldCreationDTO : ScriptableObject
     {
-        
+        public Vector3 PlayerPosition;
+        public string Name;
     }
 }

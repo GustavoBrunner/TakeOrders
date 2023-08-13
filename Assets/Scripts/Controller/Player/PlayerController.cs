@@ -12,15 +12,17 @@ namespace Controller
     {
         private static PlayerController _instance;
         public static PlayerController Instance { get => _instance; }
-
         public GamePhases Phase => GamePhases.first;
 
         private NavMeshAgent agent;
+        public NavMeshAgent Agent { get => this.agent; }
+        public Transform _Tf { get => this.Tf; }
 
         protected override void Awake()
         {
             base.Awake();
             agent = GetComponent<NavMeshAgent>();
+            CreateSingleton();
         }
         protected override void Update()
         {
@@ -51,7 +53,7 @@ namespace Controller
             if(Physics.Raycast(MouseInfos.MousePosition(), out hit))
             {
                 this.agent?.SetDestination(hit.point);
-                Debug.Log("Player movendo");
+                Debug.Log($"Player movendo {this.agent.remainingDistance}");
             }
         }
         private void CreateSingleton()
@@ -75,6 +77,15 @@ namespace Controller
         public void TurnOff()
         {
             this.gameObject.SetActive(false);
+        }
+        public void UpdateData(WorldCreationDTO dto)
+        {
+            transform.position = dto.PlayerPosition;
+        }
+        public float RemainingDistance()
+        {
+            var distance = Mathf.Abs(this.agent.remainingDistance);
+            return distance;
         }
     }
 }
