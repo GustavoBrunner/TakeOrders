@@ -6,7 +6,7 @@ using Controller.Observer;
 using Controller.Object;
 using System;
 using System.Linq;
-
+using Controller.Commands;
 
 namespace Controller
 {
@@ -22,6 +22,7 @@ namespace Controller
         private GameObject[] sceneInteractables;
         private IInteractable lastInteractable;
 
+        private InputController inpCtllr;
         
         protected override void Awake()
         {
@@ -35,6 +36,8 @@ namespace Controller
         {
             base.Start();
             this.sceneInteractables = GameObject.FindGameObjectsWithTag("Interactable");
+            inpCtllr = this.gameObject.AddComponent<InputController>();
+            this.gameObject.AddComponent<InputManager>();
         }
         protected override void Update()
         {
@@ -56,6 +59,7 @@ namespace Controller
         protected override void RemoveObserver(IObserver observer)
         {
         }
+        //criar o singleton do gamecontroller
         private void CreateSingleton()
         {
             if(_instance != null)
@@ -68,6 +72,7 @@ namespace Controller
                 DontDestroyOnLoad(gameObject);
             }
         }
+        //Função para pegar os prefabs na pasta resources
         private void GetPrefabs()
         {
             try
@@ -85,7 +90,7 @@ namespace Controller
             }
         }
         //checa se o mouse está em cima de um objeto interativo
-        private void CheckInteractableObject()
+        public void CheckInteractableObject()
         {
             try
             {
@@ -99,7 +104,7 @@ namespace Controller
                         interactable?.HighLight();
                         //o objeto é guardado em uma variável, variável de apoio para poder desligar um objeto após o mouse sair do item
                         lastInteractable = interactable;
-                        if (Input.GetMouseButtonDown(0))
+                        if (InputState.InteractionBtn)
                         {
                             //checa se distância do player para o item é menor que 3
                             Debug.Log($"Distance {DistanceInteractablePlayer(interactable)}");

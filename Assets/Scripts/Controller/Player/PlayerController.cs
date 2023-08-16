@@ -27,10 +27,6 @@ namespace Controller
         protected override void Update()
         {
             base.Update();
-            if (Input.GetMouseButtonDown(0))
-            {
-                Move();
-            }
         }
         public override void AddObserver(IObserver observer)
         {

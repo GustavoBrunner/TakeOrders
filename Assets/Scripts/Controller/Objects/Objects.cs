@@ -65,7 +65,10 @@ namespace Controller.Object
 
         public void DownLight()
         {
-            StartCoroutine(OutLineDownLight(0.6f));
+            if (this.gameObject.activeSelf)
+            {
+                StartCoroutine(OutLineDownLight(0.6f));
+            }
             Debug.Log("Desligando outline");
         }
         private IEnumerator OutLineHighLight(float speed)
