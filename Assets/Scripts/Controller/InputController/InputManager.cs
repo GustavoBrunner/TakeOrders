@@ -9,6 +9,7 @@ namespace Controller.Commands
     {
         BaseCommand interaction;
         BaseCommand walk;
+
         CommandController cmdCtllr;
         private void Awake()
         {
