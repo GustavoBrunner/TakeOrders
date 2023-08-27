@@ -78,7 +78,7 @@ namespace Controller
             tf.localScale = Vector2.one;
             this.inventoryOpened = true;
         }
-        private void CloseInventory()
+        public void CloseInventory()
         {
             tf.localScale = Vector2.zero;
             CloseDescription();
@@ -95,7 +95,6 @@ namespace Controller
         }
         private void CheckSlot(Objects item)
         {
-            
             if(inventoryOpened)
             {
                 selectedObject = item;
