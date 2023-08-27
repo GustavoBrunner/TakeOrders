@@ -2,6 +2,7 @@ using Controller.Observer;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Controller.Object
 {
@@ -10,10 +11,12 @@ namespace Controller.Object
         protected Outline Outline;
         private bool mouseIn;
 
-
         public Transform InteractablePosition => this.transform;
 
         public float radius => 2f;
+
+        public Sprite InventoryRender;
+        public DescriptionItem Description;
 
 
         protected override void Awake()
@@ -55,6 +58,7 @@ namespace Controller.Object
         {
             Debug.Log("Interagindo com objeto");
             this.gameObject.SetActive(false);
+            GameEvents.onGetItemTest.Invoke(this.gameObject);
         }
 
         public void HighLight()

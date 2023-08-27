@@ -16,7 +16,13 @@ namespace Controller
         { 
             get 
             {
-                index++;
+                if (index < uiBtns.Count)
+                {
+                    Debug.Log(index);
+                    index++;
+                }
+                else
+                    index = 0;
                 return uiBtns[index];
             } 
         }
@@ -37,11 +43,11 @@ namespace Controller
 
         private void Update()
         {
-            if (InputState.SelectChoice1)
+            if (InputState.SelectChoice3)
             {
                 OpenUi();
             }
-            if (InputState.SelectChoice2)
+            if (InputState.SelectChoice4)
             {
                 CloseUi();
             }
@@ -80,7 +86,6 @@ namespace Controller
             if(index < uiBtns.Count)
             {
                 nextButton?.Select();
-                
             }
         }
         public void FirstOption()
