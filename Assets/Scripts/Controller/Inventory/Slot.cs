@@ -13,25 +13,28 @@ namespace Controller
         public Objects item { get; protected set; }
         private GameObject placeHolder;
         public Image PlaceHolder { get; protected set; }
-        private void Awake()
+        protected virtual void Awake()
         {
-            PlaceHolder = GetComponent<Image>();
-            PlaceHolder.transform.localScale = Vector2.zero;
+            this.PlaceHolder = GetComponent<Image>();
+            this.PlaceHolder.transform.localScale = Vector2.zero;
             _isOccupied = false;
         }
 
         public void ClearSlot()
         {
             this._isOccupied = false;
-            PlaceHolder = null;
+            this.PlaceHolder.enabled = false;
+            this.PlaceHolder.sprite = null;
+            this.item = null;
         }
         public void FillSlot(Objects item)
         {
             Debug.Log("Dentro da função FillSlot");
             this._isOccupied = true;
+            this.PlaceHolder.enabled = true;
             this.item = item;
-            PlaceHolder.sprite = item.InventoryRender;
-            PlaceHolder.transform.localScale = Vector2.one;
+            this.PlaceHolder.sprite = item.InventoryRender;
+            this.PlaceHolder.transform.localScale = Vector2.one;
             Debug.Log(PlaceHolder.sprite);
         }
         public void ShowDescription()
@@ -40,6 +43,11 @@ namespace Controller
             {
                 GameEvents.onShowDescription.Invoke(this.item);
             }
+        }
+        public void SendSlot(Slot slot)
+        {
+            GameEvents.onUnequipItem.Invoke(slot);
+            Debug.Log($"Item enviado {slot.item}");
         }
     }
 }
