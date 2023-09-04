@@ -56,9 +56,11 @@ namespace Controller.Object
 
         public void Interact()
         {
-            Debug.Log("Interagindo com objeto");
-            this.gameObject.SetActive(false);
-            GameEvents.onGetItemTest.Invoke(this.gameObject);
+            //chamará a função no UiController que mostrará as opções de interação
+            PlayerController.Instance.CheckCanMove(false);
+            GameController.Instance.FlowChart.SetGameObjectVariable("InteractedObj", this.gameObject);
+            Debug.Log(GameController.Instance.FlowChart.GetGameObjectVariable("InteractedObj"));
+            GameController.Instance.FlowChart.ExecuteBlock("ObjChecker");
         }
 
         public void HighLight()

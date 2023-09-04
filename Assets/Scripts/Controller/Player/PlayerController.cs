@@ -18,11 +18,14 @@ namespace Controller
         public NavMeshAgent Agent { get => this.agent; }
         public Transform _Tf { get => this.Tf; }
 
+        private bool canMove;
+
         protected override void Awake()
         {
             base.Awake();
             agent = GetComponent<NavMeshAgent>();
             CreateSingleton();
+            canMove = true;
         }
         protected override void Update()
         {
@@ -48,8 +51,11 @@ namespace Controller
             RaycastHit hit;
             if(Physics.Raycast(MouseInfos.MousePosition(), out hit))
             {
-                this.agent?.SetDestination(hit.point);
-                Debug.Log($"Player movendo {this.agent.remainingDistance}");
+                if (canMove)
+                {
+                    this.agent?.SetDestination(hit.point);
+                    Debug.Log($"Player movendo {this.agent.remainingDistance}");
+                }
             }
         }
         private void CreateSingleton()
@@ -82,6 +88,15 @@ namespace Controller
         {
             var distance = Mathf.Abs(this.agent.remainingDistance);
             return distance;
+        }
+        public void CheckCanMove(bool b)
+        {
+            this.canMove = b;
+        }
+        public void LetMove()
+        {
+            this.canMove = true;
+            Debug.Log(canMove);
         }
     }
 }

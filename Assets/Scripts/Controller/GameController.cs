@@ -7,11 +7,13 @@ using Controller.Object;
 using System;
 using System.Linq;
 using Controller.Commands;
+using Fungus;
 
 namespace Controller
 {
     public class GameController : Observable, IObserver
     {
+        public Flowchart FlowChart { get; private set; }
         private static GameController _instance;
         public static GameController Instance { get => _instance; }
         [SerializeField]
@@ -23,6 +25,22 @@ namespace Controller
         private IInteractable lastInteractable;
 
         private InputController inpCtllr;
+
+        private bool _isUiOpened;
+        public bool isUiOpened 
+        { get => _isUiOpened;
+            set {
+                if (!value)
+                {
+                    PlayerController.Instance.CheckCanMove(true);
+                }
+                else
+                {
+                    PlayerController.Instance.CheckCanMove(false);
+                }
+                _isUiOpened = value;
+            }
+        }
         
         protected override void Awake()
         {
@@ -31,6 +49,7 @@ namespace Controller
             GetPrefabs();
             IsTestMode = true;
             PoolableController.TurnObjectsOn(GamePhases.first);
+            isUiOpened = false;
         }
         protected override void Start()
         {
@@ -38,11 +57,13 @@ namespace Controller
             this.sceneInteractables = GameObject.FindGameObjectsWithTag("Interactable");
             inpCtllr = this.gameObject.AddComponent<InputController>();
             this.gameObject.AddComponent<InputManager>();
+            this.FlowChart = FindObjectOfType<Flowchart>();
         }
         protected override void Update()
         {
             base.Update();
             CheckInteractableObject();
+            
         }
         public void OnNotify<T>(NotificationTypes type, T value)
         {
@@ -82,7 +103,7 @@ namespace Controller
                 PoolableController.AddPrefab(player);
 
 
-                PoolableController.InstantiateObjects();
+                //PoolableController.InstantiateObjects();
             }
             catch (Exception e)
             {

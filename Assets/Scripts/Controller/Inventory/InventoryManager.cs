@@ -1,4 +1,3 @@
-using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +10,9 @@ namespace Controller
 {
     public class InventoryManager : MonoBehaviour
     {
-        private List<Slot> inventorySlots = new List<Slot>();
+        public List<Slot> inventorySlots = new List<Slot>();
         private List<UtilitySlot> utilitySlots = new List<UtilitySlot>();
-        private List<Objects> equipedObjects = new List<Objects>();
+
         private List<GameObject> prefabs = new List<GameObject>();
         private RectTransform tf;
         private bool inventoryOpened;
@@ -22,32 +21,32 @@ namespace Controller
         private TMP_Text[] descriptionTxt;
         private TMP_Text description;
         private TMP_Text name;
-        private Transform[] actionsGo;
-        private Transform _actionsGo;
-        private Transform equipBtn;
-        private Transform unequipBtn;
-
+        private GameObject actionsGo;
+        private Transform[] actionsGos;
+        private Transform equipTf;
+        private Transform unequipTf;
+        private List<Objects> equipedItems = new List<Objects>();
         private Objects selectedObject;
 
-        private RaycastHit hit;
-
-        private Slot selectedSlotObj;
+        private Slot selectedSlot;
         private void Awake()
         {
             inventorySlots.AddRange(GameObject.Find("ItemSlots").GetComponentsInChildren<Slot>());
             utilitySlots.AddRange(GameObject.Find("UtilitySlots").GetComponentsInChildren<UtilitySlot>());
-            _actionsGo = GameObject.Find("Actions").transform;
-            actionsGo = GameObject.Find("Actions").GetComponentsInChildren<Transform>();
-            equipBtn = actionsGo.Select(eb => eb.GetComponent<Transform>())
-                .Where(eb => eb.gameObject.name == "Equip").First();
-            unequipBtn = actionsGo.Select(ub => ub.GetComponent<Transform>())
-                .Where(ub => ub.gameObject.name == "Unequip").First();
+            actionsGo = GameObject.Find("Actions");
+            actionsGos = GameObject.Find("Actions").GetComponentsInChildren<Transform>();
+            equipTf = actionsGos.Select(ag => ag.GetComponent<Transform>())
+                .Where(ag => ag.gameObject.name == "Equip")
+                .First();
+            unequipTf = actionsGos.Select(ag => ag.GetComponent<Transform>())
+                .Where(ag => ag.gameObject.name == "Unequip")
+                .First();
 
             tf = GameObject.Find("Render").GetComponent<RectTransform>();
 
             GameEvents.onGetItemTest.AddListener(GetItem);
             GameEvents.onShowDescription.AddListener(CheckSlot);
-            GameEvents.onUnequipItem.AddListener(GetSlot);
+            GameEvents.onSelectUtilitySlot.AddListener(GetSlot);
 
             objectDescriptions = GameObject.Find("Descriptions");
             descriptionTxt = GetComponentsInChildren<TMP_Text>();
@@ -57,9 +56,12 @@ namespace Controller
                       .Where(dt => dt.text == "Description").First();
             name = this.descriptionTxt.Select(dt => dt.GetComponent<TMP_Text>())
                      .Where(dt => dt.text == "Name").First();
-            CloseInventory();
         }
-
+        private void Start()
+        {
+            CloseInventory();
+            
+        }
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.I))
@@ -70,7 +72,6 @@ namespace Controller
             {
                 CloseInventory();
             }
-            
         }
         private void GetItem(GameObject item)
         {
@@ -85,11 +86,12 @@ namespace Controller
                 slots.FillSlot(objects);
             }
         }
-        
+
         private void OpenInventory()
         {
             tf.localScale = Vector2.one;
             this.inventoryOpened = true;
+            GameController.Instance.isUiOpened = true;
         }
         public void CloseInventory()
         {
@@ -97,6 +99,7 @@ namespace Controller
             CloseDescription();
             CloseActionsWindow();
             this.inventoryOpened = false;
+            GameController.Instance.isUiOpened = false;
         }
         private void OpenDescription()
         {
@@ -112,62 +115,63 @@ namespace Controller
             {
                 selectedObject = item;
                 OpenDescription();
-                OpenActionWindowEquip();
+                OpenEquipWindow();
                 description.text = item.Description.Description;
                 name.text = item.Description.Name;
             }
         }
         public void EquipItem()
         {
-            if(utilitySlots.Count <= 4)
+            if (!equipedItems.Contains(selectedObject))
             {
                 var freeSlot = utilitySlots.Select(us => us.GetComponent<UtilitySlot>())
                     .Where(us => !us.IsOccupied)
                     .First();
                 freeSlot.FillSlot(selectedObject);
-                AddItemToInventory(selectedObject);
-                Debug.Log(equipedObjects.Count);
-                CloseActionsWindow();
+                equipedItems.Add(selectedObject);
+                Debug.Log($"Itens equipados {equipedItems.Count}");
             }
-            else
-            {
-                Debug.LogError("Capacidade máxima de itens equipáveis atingida");
-            }
+            CloseActionsWindow();
         }
-        
         private void CloseActionsWindow()
         {
-            _actionsGo.transform.localScale = Vector2.zero;
+            actionsGo.transform.localScale = Vector2.zero;
         }
-        private void OpenActionWindowEquip()
+        private void OpenActionWindow()
         {
-            _actionsGo.transform.localScale = Vector2.one;
-            equipBtn.transform.localScale = Vector2.one;
-            unequipBtn.transform.localScale = Vector2.zero;
+            actionsGo.transform.localScale = Vector2.one;
         }
-        public void OpenActionWindowUnequip()
+        public void OpenUnequipWindow()
         {
-            _actionsGo.transform.localScale = Vector2.one;
-            unequipBtn.transform.localScale = Vector2.one;
-            equipBtn.transform.localScale = Vector2.zero;
+            OpenActionWindow();
+            unequipTf.localScale = Vector2.one;
+            CloseEquipWindow();
         }
-        private void AddItemToInventory(Objects obj)
+        private void CloseUnequipWindow()
         {
-            this.equipedObjects.Add(obj);
-            Debug.Log(equipedObjects.Count);
+            unequipTf.localScale = Vector2.zero;
         }
-
+        public void OpenEquipWindow()
+        {
+            OpenActionWindow();
+            CloseUnequipWindow();
+            equipTf.localScale = Vector2.one;
+        }
+        private void CloseEquipWindow()
+        {
+            equipTf.localScale = Vector2.zero;
+        } 
+        public void UnequipItem()
+        {
+            equipedItems.Remove(selectedSlot.item);
+            this.selectedSlot.ClearSlot();
+            Debug.Log($"Itens equipados {equipedItems.Count}");
+            this.selectedSlot = null;
+            CloseActionsWindow();
+        }
         private void GetSlot(Slot slot)
         {
-            selectedSlotObj = slot;
-        }
-
-        public void RemoveItemFromInventory()
-        {
-            selectedSlotObj.ClearSlot();
-            equipedObjects.Remove(selectedSlotObj.item);
-            Debug.Log(equipedObjects.Count);
-            CloseActionsWindow();
+            this.selectedSlot = slot;
         }
     }
 }
