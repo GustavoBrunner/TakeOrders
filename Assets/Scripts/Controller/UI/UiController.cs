@@ -12,21 +12,16 @@ namespace Controller
     {
         private static UiController _instance;
         public static UiController Instance { get => _instance; }
-        private List<Button> uiBtns;
-        private RectTransform uiTransform;
-        private int index;
+
+        private List<SlotUi> equipedItems = new List<SlotUi>();
 
         private void Awake()
         {
             CreateSingleton();
-            uiBtns = new List<Button>();
-            index = 0;
-
+            equipedItems.AddRange(GameObject.Find("InventoryFix").GetComponentsInChildren<SlotUi>());
         }
         private void Start()
         {
-            uiBtns.AddRange(FindObjectsOfType<Button>());
-            Debug.Log(uiBtns.Count);
             
         }
 
@@ -46,6 +41,22 @@ namespace Controller
                 DontDestroyOnLoad(gameObject);
             }
         }
-
+        public void FillUiSlots(Sprite image)
+        {
+            var freeSlot = equipedItems.Select(fs => fs.GetComponent<SlotUi>())
+                .Where(fs => !fs.isOccupied)
+                .First();
+            freeSlot.FillSlot(image);
+        }
+        public void ClearUiSlots(Sprite sprite)
+        {
+            foreach (var equipedItem in equipedItems)
+            {
+                if(equipedItem._image.sprite == sprite)
+                {
+                    equipedItem.ClearSlot();
+                }
+            }
+        }
     }
 }

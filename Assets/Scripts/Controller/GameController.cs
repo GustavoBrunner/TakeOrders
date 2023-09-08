@@ -13,6 +13,7 @@ namespace Controller
 {
     public class GameController : Observable, IObserver
     {
+        private List<Flowchart> gameFlowCharts = new List<Flowchart>();
         public Flowchart FlowChart { get; private set; }
         private static GameController _instance;
         public static GameController Instance { get => _instance; }
@@ -25,6 +26,8 @@ namespace Controller
         private IInteractable lastInteractable;
 
         private InputController inpCtllr;
+
+        public int Tendency { get; private set; }
 
         private bool _isUiOpened;
         public bool isUiOpened 
@@ -45,6 +48,7 @@ namespace Controller
         protected override void Awake()
         {
             base.Awake();
+            
             CreateSingleton();
             GetPrefabs();
             IsTestMode = true;
@@ -57,13 +61,19 @@ namespace Controller
             this.sceneInteractables = GameObject.FindGameObjectsWithTag("Interactable");
             inpCtllr = this.gameObject.AddComponent<InputController>();
             this.gameObject.AddComponent<InputManager>();
-            this.FlowChart = FindObjectOfType<Flowchart>();
+            gameFlowCharts.AddRange(FindObjectsOfType<Flowchart>());
+            FlowChart = FindObjectOfType<Flowchart>();
         }
         protected override void Update()
         {
             base.Update();
             CheckInteractableObject();
             
+        }
+        public void SubTendency()
+        {
+            this.Tendency--;
+            this.FlowChart.SetIntegerVariable("Tendency", this.Tendency);
         }
         public void OnNotify<T>(NotificationTypes type, T value)
         {
@@ -119,6 +129,7 @@ namespace Controller
                 {
                     var interactable = hitInfo.collider.GetComponent<IInteractable>();
                     //verifica se onde o mouse está tem um objeto com componente interactable
+                    
                     if (interactable != null)
                     {
                         //se tiver, vai chamar a função highlight do objeto

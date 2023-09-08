@@ -5,12 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 namespace Controller
 {
     public class PlayerController : PhysicsController, IPoolable
     {
         private static PlayerController _instance;
+        private CameraController cam;
+
         public static PlayerController Instance { get => _instance; }
         public GamePhases Phase => GamePhases.first;
 
@@ -20,12 +23,15 @@ namespace Controller
 
         private bool canMove;
 
+        public int walkIgnoreLayer;
         protected override void Awake()
         {
             base.Awake();
             agent = GetComponent<NavMeshAgent>();
             CreateSingleton();
             canMove = true;
+            cam = FindObjectOfType<CameraController>();
+            walkIgnoreLayer = 1 << LayerMask.NameToLayer("Floor");
         }
         protected override void Update()
         {
@@ -49,12 +55,18 @@ namespace Controller
         public void Move()
         {
             RaycastHit hit;
-            if(Physics.Raycast(MouseInfos.MousePosition(), out hit))
+            /**
+             * Para excluir, ou detectar somente uma camada do raycast, precisa declarar ela como int, 
+             * depois passar o valor 1 << layermask.NameToLayer("Nome da Camada"). Também podemos passar mais camadas ao mesmo tempo, 
+             * repetindo esse processo de 1 << layermask.NameToLayer("Nome da Camada")
+             * usar o Mathf.Infinity para a distância máxima, e deixar isso tudo em um if. As filtragens de camada, se necessário, 
+             * podem ser feitas nos ifs
+             */
+            if (Physics.Raycast(cam.camTf.position, MouseInfos.MousePosition().direction,out hit, Mathf.Infinity, walkIgnoreLayer))
             {
-                if (canMove)
+                if(canMove)
                 {
-                    this.agent?.SetDestination(hit.point);
-                    Debug.Log($"Player movendo {this.agent.remainingDistance}");
+                    this.agent.SetDestination(hit.point);
                 }
             }
         }
@@ -98,5 +110,6 @@ namespace Controller
             this.canMove = true;
             Debug.Log(canMove);
         }
+        
     }
 }

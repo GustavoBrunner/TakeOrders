@@ -129,6 +129,7 @@ namespace Controller
                     .First();
                 freeSlot.FillSlot(selectedObject);
                 equipedItems.Add(selectedObject);
+                UiController.Instance.FillUiSlots(selectedObject.InventoryRender);
                 Debug.Log($"Itens equipados {equipedItems.Count}");
             }
             CloseActionsWindow();
@@ -164,6 +165,7 @@ namespace Controller
         public void UnequipItem()
         {
             equipedItems.Remove(selectedSlot.item);
+            UiController.Instance.ClearUiSlots(selectedSlot.item.InventoryRender);
             this.selectedSlot.ClearSlot();
             Debug.Log($"Itens equipados {equipedItems.Count}");
             this.selectedSlot = null;
