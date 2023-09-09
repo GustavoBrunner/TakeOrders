@@ -1030,7 +1030,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 23
   indentLevel: 0
-  storyText: "Interagiu com o segundo objeto, que doido n\xE3o?"
+  storyText: "Voc\xEA chega at\xE9 o Aparador, conforme a voz havia lhe orientado.
+    O m\xF3vel parece desgastado com o tempo - muito tempo - por\xE9m \xE9 feito
+    de uma madeira de qualidade. \n\n\xC9 caro. Uma heran\xE7a de fam\xEDlia de morador
+    dessa casa, talvez?\n\nEm sua frente est\xE3o as duas gavetas, ambas id\xEAnticas."
   description: 
   character: {fileID: 0}
   portrait: {fileID: 0}
