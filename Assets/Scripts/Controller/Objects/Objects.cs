@@ -15,6 +15,10 @@ namespace Controller.Object
 
         public float radius => 2f;
 
+        public bool isInteractive { get; set; }
+
+        public string Name => this.gameObject.name;
+
         public Sprite InventoryRender;
         public DescriptionItem Description;
 
@@ -56,11 +60,14 @@ namespace Controller.Object
 
         public void Interact()
         {
-            //chamará a função no UiController que mostrará as opções de interação
-            PlayerController.Instance.CheckCanMove(false);
-            GameController.Instance.FlowChart.SetGameObjectVariable("InteractedObj", this.gameObject);
-            Debug.Log(GameController.Instance.FlowChart.GetGameObjectVariable("InteractedObj"));
-            GameController.Instance.FlowChart.ExecuteBlock("ObjChecker");
+            if (this.isInteractive)
+            {
+                //chamará a função no UiController que mostrará as opções de interação
+                PlayerController.Instance.CheckCanMove(false);
+                GameController.Instance.ItemFlowChart.SetGameObjectVariable("InteractedObj", this.gameObject);
+                Debug.Log(GameController.Instance.ItemFlowChart.GetGameObjectVariable("InteractedObj"));
+                GameController.Instance.ItemFlowChart.ExecuteBlock("ObjChecker");
+            }
         }
 
         public void HighLight()

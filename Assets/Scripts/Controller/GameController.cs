@@ -14,7 +14,8 @@ namespace Controller
     public class GameController : Observable, IObserver
     {
         private List<Flowchart> gameFlowCharts = new List<Flowchart>();
-        public Flowchart FlowChart { get; private set; }
+        public Flowchart ItemFlowChart { get; private set; }
+        public Flowchart FirstPhaseObjFlowchart { get; private set; }
         private static GameController _instance;
         public static GameController Instance { get => _instance; }
         [SerializeField]
@@ -22,11 +23,12 @@ namespace Controller
         private RaycastHit hitInfo;
         public bool IsTestMode { get; private set; }
 
-        private GameObject[] sceneInteractables;
+        private IInteractable[] sceneInteractables;
         private IInteractable lastInteractable;
 
         private InputController inpCtllr;
 
+        
         public int Tendency { get; private set; }
 
         private bool _isUiOpened;
@@ -35,11 +37,11 @@ namespace Controller
             set {
                 if (!value)
                 {
-                    PlayerController.Instance.CheckCanMove(true);
+                    GameEvents.onLetPlayerMove.Invoke(true);
                 }
                 else
                 {
-                    PlayerController.Instance.CheckCanMove(false);
+                    GameEvents.onLetPlayerMove.Invoke(false);
                 }
                 _isUiOpened = value;
             }
@@ -54,15 +56,16 @@ namespace Controller
             IsTestMode = true;
             PoolableController.TurnObjectsOn(GamePhases.first);
             isUiOpened = false;
+            
+            Debug.Log(gameFlowCharts.Count);
         }
         protected override void Start()
         {
             base.Start();
-            this.sceneInteractables = GameObject.FindGameObjectsWithTag("Interactable");
+            GetSceneInteractables();
             inpCtllr = this.gameObject.AddComponent<InputController>();
             this.gameObject.AddComponent<InputManager>();
-            gameFlowCharts.AddRange(FindObjectsOfType<Flowchart>());
-            FlowChart = FindObjectOfType<Flowchart>();
+            GetFlowcharts();
         }
         protected override void Update()
         {
@@ -73,7 +76,7 @@ namespace Controller
         public void SubTendency()
         {
             this.Tendency--;
-            this.FlowChart.SetIntegerVariable("Tendency", this.Tendency);
+            this.ItemFlowChart.SetIntegerVariable("Tendency", this.Tendency);
         }
         public void OnNotify<T>(NotificationTypes type, T value)
         {
@@ -164,10 +167,10 @@ namespace Controller
                     foreach (var interact in sceneInteractables)
                     {
                         //pegamos o componente Iinteractable
-                        var interac = interact.GetComponent<IInteractable>();
-                        Debug.Log($"iniciando transição de {interac}");
+                        //var interac = interact.GetComponent<IInteractable>();
+                        //Debug.Log($"iniciando transição de {interac}");
                         //E chamamos o método de piscar o objeto
-                        interac.TransitionHighLight();
+                        interact.TransitionHighLight();
                     }
                 }
 
@@ -190,5 +193,34 @@ namespace Controller
 
             return sqrDistance;
         }
+        private void GetSceneInteractables()
+        {
+            this.sceneInteractables = FindObjectsOfType<Objects>();
+            foreach (var interactable in sceneInteractables)
+            {
+                if (interactable.Name != "Aparador")
+                {
+                    interactable.isInteractive = false;
+                }
+                else
+                    interactable.isInteractive = true;
+            }
+        }
+        public void TurnInteractablesOn()
+        {
+            foreach (var interactable in sceneInteractables)
+            {
+                interactable.isInteractive = true;
+            }
+        }
+        private void GetFlowcharts()
+        {
+            gameFlowCharts.AddRange(FindObjectsOfType<Flowchart>());
+            ItemFlowChart = gameFlowCharts.Select(ifc => ifc.GetComponent<Flowchart>())
+                .Where(ifc => ifc.gameObject.name == "ItemFlowchart").First();
+            FirstPhaseObjFlowchart = gameFlowCharts.Select(ifc => ifc.GetComponent<Flowchart>())
+                .Where(ifc => ifc.gameObject.name == "ObjectsFirstPhaseFlowchart").First();
+        }
     }
+
 }

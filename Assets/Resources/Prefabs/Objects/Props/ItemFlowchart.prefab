@@ -40,8 +40,8 @@ GameObject:
   - component: {fileID: 2391645427780650915}
   - component: {fileID: 2391645427780650914}
   m_Layer: 0
-  m_Name: ObjectsFlowchart
-  m_TagString: Untagged
+  m_Name: ItemFlowchart
+  m_TagString: Flowchart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

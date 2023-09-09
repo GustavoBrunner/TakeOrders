@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,14 +15,18 @@ namespace Controller
         private Ray ray;
         RaycastHit hit;
         private List<FadeWall> fadeWalls = new List<FadeWall>();
+        private CinemachineVirtualCamera virtualCam;
         private void Awake()
         {
             camTf = GameObject.Find("Main Camera").GetComponent<Transform>();
             GameEvents.onShowFadeWall.AddListener(ShowWalls);
+            virtualCam = GetComponent<CinemachineVirtualCamera>();
         }
         private void Start()
         {
             playerTransform = PlayerController.Instance._Tf;
+            virtualCam.Follow = playerTransform.transform;
+            virtualCam.LookAt = playerTransform.transform;
         }
         private void Update()
         {

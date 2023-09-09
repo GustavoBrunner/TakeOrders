@@ -10,7 +10,7 @@ namespace Controller
     public class ShowDescription : UnityEvent<Objects> { }
     public class ObjectInteraction : UnityEvent<Objects> { }
     public class SelectUtilitySlot : UnityEvent<Slot> { }
-
+    public class LetPlayerMove : UnityEvent<bool> { }
     public class ShowFadeWalls : UnityEvent { }
     public class GameEvents 
     {
@@ -23,5 +23,7 @@ namespace Controller
         public static SelectUtilitySlot onSelectUtilitySlot = new SelectUtilitySlot();
 
         public static ShowFadeWalls onShowFadeWall = new ShowFadeWalls();
+
+        public static LetPlayerMove onLetPlayerMove = new LetPlayerMove();
     }
 }

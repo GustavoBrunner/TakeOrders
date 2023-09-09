@@ -1,3 +1,4 @@
+using Cinemachine;
 using Controller.Object;
 using Controller.Observer;
 using Controller.Phase;
@@ -23,6 +24,7 @@ namespace Controller
 
         private bool canMove;
 
+        
         public int walkIgnoreLayer;
         protected override void Awake()
         {
@@ -32,6 +34,7 @@ namespace Controller
             canMove = true;
             cam = FindObjectOfType<CameraController>();
             walkIgnoreLayer = 1 << LayerMask.NameToLayer("Floor");
+            GameEvents.onLetPlayerMove.AddListener(CheckCanMove);
         }
         protected override void Update()
         {
