@@ -129,6 +129,8 @@ namespace Controller
                     .First();
                 freeSlot.FillSlot(selectedObject);
                 equipedItems.Add(selectedObject);
+                GameController.Instance.ChangeFlowchartBool(selectedObject.Name, true);
+                Debug.Log(selectedObject.gameObject.name);
                 UiController.Instance.FillUiSlots(selectedObject.InventoryRender);
                 Debug.Log($"Itens equipados {equipedItems.Count}");
             }
@@ -164,6 +166,7 @@ namespace Controller
         } 
         public void UnequipItem()
         {
+            GameController.Instance.ChangeFlowchartBool(selectedSlot.item.Name, false);
             equipedItems.Remove(selectedSlot.item);
             UiController.Instance.ClearUiSlots(selectedSlot.item.InventoryRender);
             this.selectedSlot.ClearSlot();

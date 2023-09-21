@@ -119,5 +119,10 @@ namespace Controller.Object
             Debug.Log("Transição de cenas");
             StartCoroutine(StartTransition());
         }
+
+        public void TurnOnInteraction()
+        {
+            this.isInteractive = true; ;
+        }
     }
 }

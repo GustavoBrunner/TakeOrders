@@ -144,9 +144,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InventoryRender: {fileID: 21300000, guid: a6fbd5a181bc51e42a61a73fe8d727c8, type: 3}
   Description:
-    Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. In bibendum
-      varius nulla ac tincidunt. Donec ac mi a erat iaculis semper. Ut tincidunt,
-      quam vitae feugiat congue, nunc odio finibus libero, porttitor pellentesque
-      lectus enim nec dui. Suspendisse sit amet massa lorem.
+    Description: "\xC9 uma chave de metal, antiga, do tipo que n\xE3o se fabrica
+      mais hoje em dia. \n\nQue tipo de arm\xE1rio usa uma chave desse tamanho?\n\nEst\xE1
+      levemente enferrujada."
     Sprite: {fileID: 0}
-    Name: Item
+    Name: Chave

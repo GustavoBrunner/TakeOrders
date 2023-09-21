@@ -12,5 +12,6 @@ namespace Controller.Object
         void HighLight();
         void DownLight();
         void TransitionHighLight();
+        void TurnOnInteraction();
     }
 }

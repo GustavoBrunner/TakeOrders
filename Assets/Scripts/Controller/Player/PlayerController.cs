@@ -33,6 +33,7 @@ namespace Controller
             CreateSingleton();
             canMove = true;
             cam = FindObjectOfType<CameraController>();
+            this.agent.stoppingDistance = 0.6f;
             walkIgnoreLayer = 1 << LayerMask.NameToLayer("Floor");
             GameEvents.onLetPlayerMove.AddListener(CheckCanMove);
         }
@@ -113,6 +114,14 @@ namespace Controller
             this.canMove = true;
             Debug.Log(canMove);
         }
-        
+        public void StopPlayerMovement()
+        {
+
+        }
+        //IEnumerator ChangeMoveState()
+        //{
+        //    agent.stoppingDistance
+        //    yield return new WaitForSeconds(2f);
+        //}
     }
 }

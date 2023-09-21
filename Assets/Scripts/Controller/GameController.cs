@@ -73,9 +73,9 @@ namespace Controller
             CheckInteractableObject();
             
         }
-        public void SubTendency()
+        public void SubTendency(int tend)
         {
-            this.Tendency--;
+            this.Tendency-= tend;
             this.ItemFlowChart.SetIntegerVariable("Tendency", this.Tendency);
         }
         public void OnNotify<T>(NotificationTypes type, T value)
@@ -139,15 +139,10 @@ namespace Controller
                         interactable?.HighLight();
                         //o objeto é guardado em uma variável, variável de apoio para poder desligar um objeto após o mouse sair do item
                         lastInteractable = interactable;
+                        
                         if (InputState.InteractionBtn)
                         {
-                            //checa se distância do player para o item é menor que 3
-                            Debug.Log($"Distance {DistanceInteractablePlayer(interactable)}");
-                            if(DistanceInteractablePlayer(interactable) < 3f)
-                            {
-                                //se for, chama a função de interação do objeto
-                                interactable.Interact();
-                            }
+                            InputManager.Instance.interactable = lastInteractable;
                         }
                     }
                     else
@@ -186,7 +181,7 @@ namespace Controller
         /// </summary>
         /// <param name="interactable"></param>
         /// <returns></returns>
-        private float DistanceInteractablePlayer(IInteractable interactable)
+        public float DistanceInteractablePlayer(IInteractable interactable)
         {
             var distance = PlayerController.Instance._Tf.position - interactable.InteractablePosition.position;
             var sqrDistance = distance.sqrMagnitude;
@@ -220,6 +215,10 @@ namespace Controller
                 .Where(ifc => ifc.gameObject.name == "ItemFlowchart").First();
             FirstPhaseObjFlowchart = gameFlowCharts.Select(ifc => ifc.GetComponent<Flowchart>())
                 .Where(ifc => ifc.gameObject.name == "ObjectsFirstPhaseFlowchart").First();
+        }
+        public void ChangeFlowchartBool(string name, bool value)
+        {
+            ItemFlowChart.SetBooleanVariable(name, value);
         }
     }
 
