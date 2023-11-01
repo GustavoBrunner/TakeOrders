@@ -9,7 +9,7 @@ namespace Controller.Object
         public void Get()
         {
             Debug.Log("Pegando item");
-            GameEvents.onGetItemTest.Invoke(this.gameObject);
+            //GameEvents.onGetItemTest.Invoke(this.gameObject);
             //GameController.Instance.ChangeFlowchartBool(this.gameObject.name, true);
             gameObject.SetActive(false);
         }

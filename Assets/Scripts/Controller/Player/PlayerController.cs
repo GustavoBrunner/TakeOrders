@@ -31,7 +31,7 @@ namespace Controller
             base.Awake();
             agent = GetComponent<NavMeshAgent>();
             CreateSingleton();
-            canMove = true;
+            canMove = false;
             cam = FindObjectOfType<CameraController>();
             this.agent.stoppingDistance = 0.6f;
             walkIgnoreLayer = 1 << LayerMask.NameToLayer("Floor");
@@ -68,7 +68,7 @@ namespace Controller
              */
             if (Physics.Raycast(cam.camTf.position, MouseInfos.MousePosition().direction,out hit, Mathf.Infinity, walkIgnoreLayer))
             {
-                if(canMove)
+                if(canMove && !MouseInfos.CheckMouseOverUi())
                 {
                     this.agent.SetDestination(hit.point);
                 }
@@ -116,12 +116,7 @@ namespace Controller
         }
         public void StopPlayerMovement()
         {
-
+            this.canMove = false;
         }
-        //IEnumerator ChangeMoveState()
-        //{
-        //    agent.stoppingDistance
-        //    yield return new WaitForSeconds(2f);
-        //}
     }
 }

@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 6815934755332770635}
   - component: {fileID: 6815934755332770628}
   - component: {fileID: 6815934755332770629}
+  - component: {fileID: 367485366158134893}
   m_Layer: 5
   m_Name: SayDialog
   m_TagString: Untagged
@@ -238,6 +239,7 @@ MonoBehaviour:
   characterImage: {fileID: 6815934754534491844}
   fitTextWithImage: 1
   closeOtherDialogs: 0
+  SayDialogueOpened: 0
 --- !u!114 &6815934755332770634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,6 +395,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &367485366158134893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6815934755332770630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2830683406d655742a763eb17c9352af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6815934755439704887
 GameObject:
   m_ObjectHideFlags: 0

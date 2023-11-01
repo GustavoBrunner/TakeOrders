@@ -1,3 +1,4 @@
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,7 +32,9 @@ namespace Controller
         
         public int Tendency { get; private set; }
 
-        private bool _isUiOpened;
+        public GameObject sayDialogue;
+
+        public bool _isUiOpened { get; private set; }
         public bool isUiOpened 
         { get => _isUiOpened;
             set {
@@ -46,7 +49,7 @@ namespace Controller
                 _isUiOpened = value;
             }
         }
-        
+
         protected override void Awake()
         {
             base.Awake();
@@ -56,8 +59,9 @@ namespace Controller
             IsTestMode = true;
             PoolableController.TurnObjectsOn(GamePhases.first);
             isUiOpened = false;
-            
+            LoadFirstScene();
             Debug.Log(gameFlowCharts.Count);
+            sayDialogue = FindObjectOfType<SayDialog>().gameObject;
         }
         protected override void Start()
         {
@@ -71,7 +75,6 @@ namespace Controller
         {
             base.Update();
             CheckInteractableObject();
-            
         }
         public void SubTendency(int tend)
         {
@@ -142,6 +145,7 @@ namespace Controller
                         
                         if (InputState.InteractionBtn)
                         {
+                            
                             InputManager.Instance.interactable = lastInteractable;
                         }
                     }
@@ -161,14 +165,11 @@ namespace Controller
                     //todos os objetos interativos serão armazenados num array de gameobjets
                     foreach (var interact in sceneInteractables)
                     {
-                        //pegamos o componente Iinteractable
-                        //var interac = interact.GetComponent<IInteractable>();
-                        //Debug.Log($"iniciando transição de {interac}");
                         //E chamamos o método de piscar o objeto
-                        interact.TransitionHighLight();
+                        if(interact.isInteractive)
+                            interact.TransitionHighLight();
                     }
                 }
-
             }
             catch(Exception e)
             {
@@ -220,6 +221,44 @@ namespace Controller
         {
             ItemFlowChart.SetBooleanVariable(name, value);
         }
-    }
+        public void ActivateRedDoorObject()
+        {
+            foreach (var interac in sceneInteractables)
+            {
+                if(interac.Name == "EstanteLivrosComPortinhaPorta1")
+                {
+                    interac.TurnOnInteraction();
+                    Debug.Log("Estante ativada");
+                }
+            }
+        }
+        public void LoadFirstScene()
+        {
+            SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Additive);
+        }
 
+        public void PickupItem(string itemName, string interactableName)
+        {
+            foreach ( var interactable in sceneInteractables )
+            {
+                if( interactable.Name == interactableName )
+                {
+                    foreach (var item in interactable.GetItems())
+                    {
+                        if(item.Name == itemName)
+                        {
+                            GameEvents.onGetItemTest.Invoke(item);
+                            Debug.Log("Item existe");
+                        }
+                    }
+                }
+            }
+        }
+        public void UiOpened(bool b)
+        {
+            this.isUiOpened = b;
+        }
+
+
+    }
 }

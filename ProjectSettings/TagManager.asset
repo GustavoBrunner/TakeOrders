@@ -8,6 +8,7 @@ TagManager:
   - PlaceHolder
   - ItemDescription
   - Flowchart
+  - Volume
   layers:
   - Default
   - TransparentFX

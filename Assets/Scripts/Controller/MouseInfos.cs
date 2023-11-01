@@ -13,7 +13,10 @@ namespace Controller
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             return ray;
         }
-
+        public static bool CheckMouseOverUi()
+        {
+            return EventSystem.current.IsPointerOverGameObject();
+        }
         
     }
 }

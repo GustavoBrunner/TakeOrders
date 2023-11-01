@@ -14,6 +14,7 @@ namespace Controller
         {
             _image = GetComponent<Image>();
             isOccupied = false;
+            image = this._image.sprite;
         }
 
         public void FillSlot(Sprite image)
@@ -23,7 +24,7 @@ namespace Controller
         }
         public void ClearSlot()
         {
-            this._image.sprite = null;
+            this._image.sprite = image;
             isOccupied = false;
         }
 

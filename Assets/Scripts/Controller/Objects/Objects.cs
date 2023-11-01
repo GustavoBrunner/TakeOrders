@@ -15,6 +15,7 @@ namespace Controller.Object
 
         public float radius => 2f;
 
+        [SerializeField]
         public bool isInteractive { get; set; }
 
         public string Name => this.gameObject.name;
@@ -22,7 +23,7 @@ namespace Controller.Object
         public Sprite InventoryRender;
         public DescriptionItem Description;
 
-
+        public List<Items> Itens = new List<Items>();
         protected override void Awake()
         {
             base.Awake();
@@ -33,11 +34,12 @@ namespace Controller.Object
         }
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(this.transform.position, this.radius);
+            //Gizmos.DrawWireSphere(this.transform.position, this.radius);
         }
         protected override void Start()
         {
             base.Start();
+            
         }
         protected override void Update()
         {
@@ -62,18 +64,21 @@ namespace Controller.Object
         {
             if (this.isInteractive)
             {
+                Debug.Log("Interagindo");
                 //chamará a função no UiController que mostrará as opções de interação
-                PlayerController.Instance.CheckCanMove(false);
-                GameController.Instance.ItemFlowChart.SetGameObjectVariable("InteractedObj", this.gameObject);
-                Debug.Log(GameController.Instance.ItemFlowChart.GetGameObjectVariable("InteractedObj"));
+                //PlayerController.Instance.CheckCanMove(false);
+                GameController.Instance.isUiOpened = true;
+                GameController.Instance.ItemFlowChart.SetStringVariable("InteractedObjName", this.Name);
+                Debug.Log(GameController.Instance.ItemFlowChart.GetGameObjectVariable("InteractedObjName"));
                 GameController.Instance.ItemFlowChart.ExecuteBlock("ObjChecker");
             }
         }
 
         public void HighLight()
         {
-            StartCoroutine(OutLineHighLight(0.1f));
-            Debug.Log("Ligando outline");
+            if(this.isInteractive)
+                StartCoroutine(OutLineHighLight(0.1f));
+            //Debug.Log("Ligando outline");
         }
 
         public void DownLight()
@@ -82,7 +87,7 @@ namespace Controller.Object
             {
                 StartCoroutine(OutLineDownLight(0.6f));
             }
-            Debug.Log("Desligando outline");
+            //Debug.Log("Desligando outline");
         }
         private IEnumerator OutLineHighLight(float speed)
         {
@@ -123,6 +128,14 @@ namespace Controller.Object
         public void TurnOnInteraction()
         {
             this.isInteractive = true; ;
+        }
+        public void TurnOffInteraction()
+        {
+            this.isInteractive = false;
+        }
+        public List<Items> GetItems()
+        {
+            return this.Itens;
         }
     }
 }

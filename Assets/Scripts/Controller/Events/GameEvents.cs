@@ -6,12 +6,15 @@ using Controller.Object;
 namespace Controller
 {
 
-    public class GetItemEvent : UnityEvent<GameObject> { }
-    public class ShowDescription : UnityEvent<Objects> { }
+    public class GetItemEvent : UnityEvent<Items> { }
+    public class ShowDescription : UnityEvent<Items> { }
     public class ObjectInteraction : UnityEvent<Objects> { }
     public class SelectUtilitySlot : UnityEvent<Slot> { }
     public class LetPlayerMove : UnityEvent<bool> { }
     public class ShowFadeWalls : UnityEvent { }
+
+    public class TurnInventoryIcons: UnityEvent<bool> { }
+    public class TurnAllUi: UnityEvent<bool> { }
     public class GameEvents 
     {
         public static GetItemEvent onGetItemTest = new GetItemEvent();
@@ -25,5 +28,9 @@ namespace Controller
         public static ShowFadeWalls onShowFadeWall = new ShowFadeWalls();
 
         public static LetPlayerMove onLetPlayerMove = new LetPlayerMove();
+
+        public static TurnInventoryIcons onTurnInventoryIconOn = new TurnInventoryIcons();
+
+        public static TurnAllUi onTurnAllUi = new TurnAllUi();
     }
 }

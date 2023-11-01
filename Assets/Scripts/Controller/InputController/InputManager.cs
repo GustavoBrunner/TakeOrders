@@ -31,10 +31,17 @@ namespace Controller.Commands
                 cmdCtllr?.Walk();
                 //interactable = null;
             }
-            if(interactable != null && GameController.Instance.DistanceInteractablePlayer(interactable) < 2f)
+            if(interactable != null)
             {
-                interactable.Interact();
-                interactable = null;
+                if(GameController.Instance.DistanceInteractablePlayer(interactable) < 2f)
+                {
+                    interactable.Interact();
+                    interactable = null;
+                }
+                else
+                {
+                    PlayerController.Instance.Agent.SetDestination(interactable.InteractablePosition.position);
+                }
             }
         }
         private void StartCommands()

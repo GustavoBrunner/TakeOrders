@@ -10,13 +10,14 @@ namespace Controller
     {
         private bool _isOccupied;
         public bool IsOccupied { get => _isOccupied; }
-        public Objects item { get; protected set; }
+        public Items item { get; protected set; }
         private GameObject placeHolder;
+        private Sprite originalSprite;
         public Image PlaceHolder { get; protected set; }
         private void Awake()
         {
             PlaceHolder = GetComponent<Image>();
-            PlaceHolder.transform.localScale = Vector2.zero;
+            originalSprite = PlaceHolder.sprite;
             _isOccupied = false;
         }
 
@@ -24,18 +25,16 @@ namespace Controller
         {
             //enabled = false;
             this._isOccupied = false;
-            this.PlaceHolder.sprite = null;
+            this.PlaceHolder.sprite = originalSprite;
             this.item = null;
-            this.PlaceHolder.enabled = false;
         }
-        public void FillSlot(Objects item)
+        public void FillSlot(Items item)
         {
             Debug.Log("Dentro da função FillSlot");
-            this.PlaceHolder.enabled = true;
+            //this.PlaceHolder.enabled = true;
             this._isOccupied = true;
             this.item = item;
-            PlaceHolder.sprite = item.InventoryRender;
-            PlaceHolder.transform.localScale = Vector2.one;
+            PlaceHolder.sprite = item.ItemSprite;
             Debug.Log(PlaceHolder.sprite);
         }
         public void ShowDescription()

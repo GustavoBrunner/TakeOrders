@@ -7,6 +7,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+
+
 namespace Fungus
 {
     /// <summary>
@@ -95,13 +97,14 @@ namespace Fungus
 		// Cache active Say Dialogs to avoid expensive scene search
 		protected static List<SayDialog> activeSayDialogs = new List<SayDialog>();
 
+        public bool SayDialogueOpened;
 		protected virtual void Awake()
 		{
 			if (!activeSayDialogs.Contains(this))
 			{
 				activeSayDialogs.Add(this);
 			}
-
+            
             nameTextAdapter.InitFromGameObject(nameText != null ? nameText.gameObject : nameTextGO);
             storyTextAdapter.InitFromGameObject(storyText != null ? storyText.gameObject : storyTextGO);
         }
@@ -319,6 +322,9 @@ namespace Fungus
         public virtual void SetActive(bool state)
         {
             gameObject.SetActive(state);
+            SayDialogueOpened = state;
+            
+            Debug.Log(SayDialogueOpened);
         }
 
         /// <summary>

@@ -25,10 +25,14 @@ namespace Controller
         private Transform[] actionsGos;
         private Transform equipTf;
         private Transform unequipTf;
-        private List<Objects> equipedItems = new List<Objects>();
-        private Objects selectedObject;
+        private List<Items> equipedItems = new List<Items>();
+        private Items selectedObject;
 
         private Slot selectedSlot;
+
+        private GameObject inventoryGo;
+
+        
         private void Awake()
         {
             inventorySlots.AddRange(GameObject.Find("ItemSlots").GetComponentsInChildren<Slot>());
@@ -56,6 +60,9 @@ namespace Controller
                       .Where(dt => dt.text == "Description").First();
             name = this.descriptionTxt.Select(dt => dt.GetComponent<TMP_Text>())
                      .Where(dt => dt.text == "Name").First();
+
+            inventoryOpened = false;
+            inventoryGo = GameObject.Find("Render");
         }
         private void Start()
         {
@@ -64,40 +71,40 @@ namespace Controller
         }
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                OpenInventory();
-            }
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                CloseInventory();
-            }
+            
         }
-        private void GetItem(GameObject item)
+        private void GetItem(Items item)
         {
             var slots = inventorySlots.Select(i => i.GetComponent<Slot>())
                 .Where(i => !i.IsOccupied)
                 .First();
             Debug.Log(slots.name);
-            var objects = item.GetComponent<Objects>();
-            if(objects != null && !slots.IsOccupied)
+            if(item != null && !slots.IsOccupied)
             {
-
-                slots.FillSlot(objects);
+                slots.FillSlot(item);
+                return;
             }
         }
 
-        private void OpenInventory()
+        public void OpenInventory()
         {
-            tf.localScale = Vector2.one;
-            this.inventoryOpened = true;
-            GameController.Instance.isUiOpened = true;
+            if (!inventoryOpened && !GameController.Instance.sayDialogue.activeSelf)
+            {
+                inventoryGo.SetActive(true);
+                this.inventoryOpened = true;
+                CloseActionsWindow();
+                GameController.Instance.isUiOpened = true;
+                GameEvents.onTurnInventoryIconOn.Invoke(false);
+            }
+            else
+            {
+                CloseInventory();
+                GameEvents.onTurnInventoryIconOn.Invoke(true);
+            }
         }
         public void CloseInventory()
         {
-            tf.localScale = Vector2.zero;
-            CloseDescription();
-            CloseActionsWindow();
+            inventoryGo.SetActive(false);
             this.inventoryOpened = false;
             GameController.Instance.isUiOpened = false;
         }
@@ -109,15 +116,15 @@ namespace Controller
         {
             objectDescriptions.transform.localScale = Vector2.zero;
         }
-        private void CheckSlot(Objects item)
+        private void CheckSlot(Items item)
         {
             if(inventoryOpened)
             {
                 selectedObject = item;
                 OpenDescription();
                 OpenEquipWindow();
-                description.text = item.Description.Description;
-                name.text = item.Description.Name;
+                description.text = item.Description;
+                name.text = item.Name;
             }
         }
         public void EquipItem()
@@ -129,9 +136,9 @@ namespace Controller
                     .First();
                 freeSlot.FillSlot(selectedObject);
                 equipedItems.Add(selectedObject);
-                GameController.Instance.ChangeFlowchartBool(selectedObject.Name, true);
-                Debug.Log(selectedObject.gameObject.name);
-                UiController.Instance.FillUiSlots(selectedObject.InventoryRender);
+                GameController.Instance.ChangeFlowchartBool("Equip"+selectedObject.Name.Replace(" ", ""), true);
+                //Debug.Log(selectedObject.gameObject.name);
+                UiController.Instance.FillUiSlots(selectedObject.ItemSprite);
                 Debug.Log($"Itens equipados {equipedItems.Count}");
             }
             CloseActionsWindow();
@@ -166,9 +173,9 @@ namespace Controller
         } 
         public void UnequipItem()
         {
-            GameController.Instance.ChangeFlowchartBool(selectedSlot.item.Name, false);
+            GameController.Instance.ChangeFlowchartBool("Equip" + selectedObject.Name.Replace(" ", ""), false);
             equipedItems.Remove(selectedSlot.item);
-            UiController.Instance.ClearUiSlots(selectedSlot.item.InventoryRender);
+            UiController.Instance.ClearUiSlots(selectedSlot.item.ItemSprite);
             this.selectedSlot.ClearSlot();
             Debug.Log($"Itens equipados {equipedItems.Count}");
             this.selectedSlot = null;
@@ -177,6 +184,6 @@ namespace Controller
         private void GetSlot(Slot slot)
         {
             this.selectedSlot = slot;
-        }
+        }   
     }
 }

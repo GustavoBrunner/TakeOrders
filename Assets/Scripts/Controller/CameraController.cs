@@ -15,12 +15,14 @@ namespace Controller
         private Ray ray;
         RaycastHit hit;
         private List<FadeWall> fadeWalls = new List<FadeWall>();
-        private CinemachineVirtualCamera virtualCam;
+        private CinemachineFreeLook virtualCam;
+        private bool isMousePressed;
         private void Awake()
         {
-            camTf = GameObject.Find("Main Camera").GetComponent<Transform>();
+            camTf = GameObject.Find("Camera").GetComponent<Transform>();
             GameEvents.onShowFadeWall.AddListener(ShowWalls);
-            virtualCam = GetComponent<CinemachineVirtualCamera>();
+            virtualCam = GetComponent<CinemachineFreeLook>();
+            isMousePressed = false;
         }
         private void Start()
         {
@@ -42,27 +44,36 @@ namespace Controller
                     fader.FadeOut();
                     fadeWalls.Add(fader);
                 }
+                else
+                {
+                    ShowWalls();
+                }
             }
+            CheckIfMousePressed();
+        }
+        private void CheckIfMousePressed()
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                virtualCam.m_XAxis.m_InputAxisName = "Mouse X";
+                virtualCam.m_XAxis.m_MaxSpeed = 500f;
+            }
+            else if(Input.GetMouseButtonUp(1))
+            {
+                virtualCam.m_XAxis.m_InputAxisName = "";
+                virtualCam.m_XAxis.m_MaxSpeed = 0f;
+            }
+            
         }
         private void ShowWalls()
         {
             if(fadeWalls.Count > 0)
             {
-                StartCoroutine(ShowHidenWalls());
-            }
-        }
-        IEnumerator ShowHidenWalls()
-        {
-            while (fadeWalls.Count != 0)
-            {
                 foreach (var wall in fadeWalls)
                 {
                     wall?.FadeIn();
-                    yield return new WaitForSeconds(0.1f);
                 }
                 fadeWalls.Clear();
-                StopAllCoroutines();
-                break;
             }
         }
     }

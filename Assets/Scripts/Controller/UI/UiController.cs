@@ -15,19 +15,27 @@ namespace Controller
 
         private List<SlotUi> equipedItems = new List<SlotUi>();
 
+        private GameObject fixInventory, charIcon, questIcon, inventoryIcon;
+
         private void Awake()
         {
             CreateSingleton();
             equipedItems.AddRange(GameObject.Find("InventoryFix").GetComponentsInChildren<SlotUi>());
+            
+            fixInventory = GameObject.Find("InventoryFix");
+            inventoryIcon = GameObject.Find("InventoryIcon");
+            charIcon = GameObject.Find("CharacterIcon");
+            questIcon = GameObject.Find("QuestsIcon");
+            GameEvents.onTurnAllUi.AddListener(CheckUiOpened);
+            GameEvents.onTurnInventoryIconOn.AddListener(UiQuestAndInventory);
         }
         private void Start()
         {
-            
+            //GameEvents.onLetPlayerMove.AddListener(CheckUiOpened);
         }
 
         private void Update()
         {
-            
         }
         private void CreateSingleton()
         {
@@ -57,6 +65,18 @@ namespace Controller
                     equipedItem.ClearSlot();
                 }
             }
+        }
+        public void CheckUiOpened(bool check)
+        {
+            inventoryIcon.SetActive(check);
+            questIcon.SetActive(check);
+            charIcon.SetActive(check);
+            fixInventory.SetActive(check);
+        }
+        public void UiQuestAndInventory(bool check)
+        {
+            charIcon.SetActive(check);
+            fixInventory.SetActive(check);
         }
     }
 }
