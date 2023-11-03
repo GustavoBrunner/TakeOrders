@@ -94,7 +94,7 @@ namespace Controller.Object
             mouseIn = true;
             while (mouseIn)
             {
-                if(Outline.OutlineWidth < 8f)
+                if(Outline.OutlineWidth < 3f)
                 {
                     Outline.OutlineWidth += speed;
                 }

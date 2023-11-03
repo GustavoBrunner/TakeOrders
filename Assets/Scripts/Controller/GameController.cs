@@ -254,11 +254,5 @@ namespace Controller
                 }
             }
         }
-        public void UiOpened(bool b)
-        {
-            this.isUiOpened = b;
-        }
-
-
     }
 }
