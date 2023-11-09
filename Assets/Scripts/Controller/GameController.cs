@@ -59,7 +59,7 @@ namespace Controller
             IsTestMode = true;
             PoolableController.TurnObjectsOn(GamePhases.first);
             isUiOpened = false;
-            LoadFirstScene();
+            //LoadFirstScene();
             Debug.Log(gameFlowCharts.Count);
             sayDialogue = FindObjectOfType<SayDialog>().gameObject;
         }
@@ -195,9 +195,7 @@ namespace Controller
             foreach (var interactable in sceneInteractables)
             {
                 if (interactable.Name != "Aparador")
-                {
                     interactable.isInteractive = false;
-                }
                 else
                     interactable.isInteractive = true;
             }
