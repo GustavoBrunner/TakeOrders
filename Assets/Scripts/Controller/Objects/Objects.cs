@@ -20,6 +20,8 @@ namespace Controller.Object
 
         public string Name => this.gameObject.name;
 
+        public float objectLayer => this.gameObject.layer;
+
         public Sprite InventoryRender;
         public DescriptionItem Description;
 

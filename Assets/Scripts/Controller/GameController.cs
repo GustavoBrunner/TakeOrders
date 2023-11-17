@@ -49,7 +49,10 @@ namespace Controller
                 _isUiOpened = value;
             }
         }
-
+        [SerializeField]
+        private int interactableLayer;
+        [SerializeField]
+        private bool testPhase = false;
         protected override void Awake()
         {
             base.Awake();
@@ -62,6 +65,8 @@ namespace Controller
             //LoadFirstScene();
             Debug.Log(gameFlowCharts.Count);
             sayDialogue = FindObjectOfType<SayDialog>().gameObject;
+            interactableLayer = 1 << LayerMask.NameToLayer("Interactables");
+            
         }
         protected override void Start()
         {
@@ -75,6 +80,10 @@ namespace Controller
         {
             base.Update();
             CheckInteractableObject();
+            if (testPhase && Input.GetKeyDown(KeyCode.DownArrow))
+                TurnInteractablesOn();
+            if(Input.GetKeyDown(KeyCode.Escape))
+
         }
         public void SubTendency(int tend)
         {
@@ -131,32 +140,31 @@ namespace Controller
         {
             try
             {
-                if(Physics.Raycast(MouseInfos.MousePosition(), out hitInfo))
+                if(Physics.Raycast(MouseInfos.MousePosition(), out hitInfo, Mathf.Infinity, interactableLayer))
                 {
                     var interactable = hitInfo.collider.GetComponent<IInteractable>();
                     //verifica se onde o mouse está tem um objeto com componente interactable
+                    //Debug.Log(interactable.Name);
                     
                     if (interactable != null)
                     {
                         //se tiver, vai chamar a função highlight do objeto
-                        interactable?.HighLight();
                         //o objeto é guardado em uma variável, variável de apoio para poder desligar um objeto após o mouse sair do item
+                        interactable?.HighLight();
                         lastInteractable = interactable;
-                        
                         if (InputState.InteractionBtn)
                         {
-                            
                             InputManager.Instance.interactable = lastInteractable;
                         }
                     }
-                    else
-                    {
-                        //se não existir mais um objeto interativo onde o mouse tá,
-                        //o objeto anterior, na variável de apoio, é desligado
-                        lastInteractable?.DownLight();
-                        //E esse objeto recebe o valor nulo.
-                        lastInteractable = null;
-                    }
+                }
+                else
+                {
+                    //se não existir mais um objeto interativo onde o mouse tá,
+                    //o objeto anterior, na variável de apoio, é desligado
+                    lastInteractable?.DownLight();
+                    //E esse objeto recebe o valor nulo.
+                    lastInteractable = null;
                 }
                 //momentaneamente está como um input, mas posteriormente esses códigos
                 //serão chamados quando trocar o cômodo

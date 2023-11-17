@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FirstPhase/HouseScenery.unity
     guid: 6cdc532e5580b3a42b3e7c0f7c9c8f68
+  - enabled: 1
+    path: Assets/Scenes/FirstPhase/SampleScene.unity
+    guid: 616f050ec02c3a14d8d05e44c5d16977
   m_configObjects: {}

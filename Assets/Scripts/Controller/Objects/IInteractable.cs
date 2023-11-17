@@ -5,7 +5,7 @@ namespace Controller.Object
 {
     public interface IInteractable
     {
-        
+        public float objectLayer { get; }
         float radius { get; }
         bool isInteractive { get; set; }
         string Name { get; }

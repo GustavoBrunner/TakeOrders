@@ -60,7 +60,7 @@ namespace Menu
         public void StartGame()
         {
             SceneManager.LoadScene("House");
-            SceneManager.LoadSceneAsync("HouseScenery", LoadSceneMode.Additive);
+            SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Additive);
         }
     }
 }
