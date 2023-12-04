@@ -23,19 +23,20 @@ namespace Controller
             GameEvents.onShowFadeWall.AddListener(ShowWalls);
             virtualCam = GetComponent<CinemachineFreeLook>();
             isMousePressed = false;
+            GameEvents.onUpdateCamPos.AddListener(UpdateCameraPosition);
         }
-        private void Start()
+        protected virtual void Start()
         {
             playerTransform = PlayerController.Instance._Tf;
             virtualCam.Follow = playerTransform.transform;
             virtualCam.LookAt = playerTransform.transform;
         }
-        private void Update()
+        protected virtual void Update()
         {
             dir = playerTransform.position - this.camTf.position;
             ray = new Ray(camTf.position, dir);
             
-            //Debug.DrawRay(camTf.position, dir, Color.black, 1f);
+            Debug.DrawRay(camTf.position, dir, Color.black, 1f);
             if(Physics.Raycast(ray, out hit))
             {
                 var fader = hit.collider.GetComponent<FadeWall>();
@@ -53,15 +54,18 @@ namespace Controller
         }
         private void CheckIfMousePressed()
         {
-            if (Input.GetMouseButtonDown(1))
+            if (!GameController.Instance.isInCorridor)
             {
-                virtualCam.m_XAxis.m_InputAxisName = "Mouse X";
-                virtualCam.m_XAxis.m_MaxSpeed = 500f;
-            }
-            else if(Input.GetMouseButtonUp(1))
-            {
-                virtualCam.m_XAxis.m_InputAxisName = "";
-                virtualCam.m_XAxis.m_MaxSpeed = 0f;
+                if (Input.GetMouseButtonDown(1))
+                {
+                    virtualCam.m_XAxis.m_InputAxisName = "Mouse X";
+                    virtualCam.m_XAxis.m_MaxSpeed = 500f;
+                }
+                else if(Input.GetMouseButtonUp(1))
+                {
+                    virtualCam.m_XAxis.m_InputAxisName = "";
+                    virtualCam.m_XAxis.m_MaxSpeed = 0f;
+                }
             }
             
         }
@@ -75,6 +79,11 @@ namespace Controller
                 }
                 fadeWalls.Clear();
             }
+        }
+        private void UpdateCameraPosition(Vector3 newPos)
+        {
+            Debug.Log($"Position Updated to: {newPos}");
+            this.camTf.position = newPos;
         }
     }
 }

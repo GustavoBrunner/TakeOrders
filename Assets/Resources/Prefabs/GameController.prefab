@@ -45,3 +45,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  CamPositions:
+  - {x: 4, y: 5.2, z: -4.6}
+  - {x: 3.74, y: 6, z: -7.2}
+  - {x: 3.74, y: 6, z: -7.2}
+  sayDialogue: {fileID: 0}
+  isInCorridor: 0
+  _isUiOpened: 0
+  interactableLayer: 0
+  testPhase: 0

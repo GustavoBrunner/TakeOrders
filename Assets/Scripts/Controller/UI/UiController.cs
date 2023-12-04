@@ -20,6 +20,9 @@ namespace Controller
         private void Awake()
         {
             CreateSingleton();
+        }
+        private void Start()
+        {
             equipedItems.AddRange(GameObject.Find("InventoryFix").GetComponentsInChildren<SlotUi>());
             
             fixInventory = GameObject.Find("InventoryFix");
@@ -28,9 +31,7 @@ namespace Controller
             questIcon = GameObject.Find("QuestsIcon");
             GameEvents.onTurnAllUi.AddListener(CheckUiOpened);
             GameEvents.onTurnInventoryIconOn.AddListener(UiQuestAndInventory);
-        }
-        private void Start()
-        {
+            GameEvents.onOpenPauseMenu.AddListener(CheckUiOpened);
             //GameEvents.onLetPlayerMove.AddListener(CheckUiOpened);
         }
 

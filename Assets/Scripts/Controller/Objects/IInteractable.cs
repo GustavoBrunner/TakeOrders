@@ -15,6 +15,9 @@ namespace Controller.Object
         void DownLight();
         void TransitionHighLight();
         void TurnOnInteraction();
+        void TurnOffInteraction();
+
+        void SetGoActive(bool status);
         List<Items> GetItems();
     }
 }

@@ -15,7 +15,7 @@ namespace Controller
     public class GameController : Observable, IObserver
     {
         private List<Flowchart> gameFlowCharts = new List<Flowchart>();
-        public Flowchart ItemFlowChart { get; private set; }
+        public Flowchart ItemFlowChart { get; set; }
         public Flowchart FirstPhaseObjFlowchart { get; private set; }
         private static GameController _instance;
         public static GameController Instance { get => _instance; }
@@ -24,17 +24,19 @@ namespace Controller
         private RaycastHit hitInfo;
         public bool IsTestMode { get; private set; }
 
-        private IInteractable[] sceneInteractables;
+        public IInteractable[] sceneInteractables;
         private IInteractable lastInteractable;
 
         private InputController inpCtllr;
 
-        
+        public Vector3[] CamPositions;
         public int Tendency { get; private set; }
 
         public GameObject sayDialogue;
 
-        public bool _isUiOpened { get; private set; }
+        public bool isInCorridor;
+
+        [SerializeField] private bool _isUiOpened;
         public bool isUiOpened 
         { get => _isUiOpened;
             set {
@@ -52,7 +54,7 @@ namespace Controller
         [SerializeField]
         private int interactableLayer;
         [SerializeField]
-        private bool testPhase = false;
+        private bool testPhase;
         protected override void Awake()
         {
             base.Awake();
@@ -61,12 +63,13 @@ namespace Controller
             GetPrefabs();
             IsTestMode = true;
             PoolableController.TurnObjectsOn(GamePhases.first);
-            isUiOpened = false;
             //LoadFirstScene();
             Debug.Log(gameFlowCharts.Count);
-            sayDialogue = FindObjectOfType<SayDialog>().gameObject;
+
+            isInCorridor = false;
             interactableLayer = 1 << LayerMask.NameToLayer("Interactables");
-            
+            testPhase = true;
+            GameEvents.onUpdateCamPos.Invoke(CamPositions[0]);
         }
         protected override void Start()
         {
@@ -75,6 +78,10 @@ namespace Controller
             inpCtllr = this.gameObject.AddComponent<InputController>();
             this.gameObject.AddComponent<InputManager>();
             GetFlowcharts();
+            sayDialogue = FindObjectOfType<SayDialog>().gameObject;
+            GameEvents.onChangeCam.Invoke("RoomKitchen");
+            
+            _isUiOpened = true;
         }
         protected override void Update()
         {
@@ -82,7 +89,31 @@ namespace Controller
             CheckInteractableObject();
             if (testPhase && Input.GetKeyDown(KeyCode.DownArrow))
                 TurnInteractablesOn();
-            if(Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+
+            }
+
+        }
+        
+
+        public void TurnBlackEffect()
+        {
+            GameEvents.onTurnBlackEffect.Invoke(true);
+        }
+        public void TurnBlackEffectOff()
+        {
+            GameEvents.onTurnBlackEffect.Invoke(false);
+        }
+
+        public void TurnWhiteEffect()
+        {
+            GameEvents.onTurnWhiteEffect.Invoke(true);
+
+        }
+        public void TurnWhiteEffectOff()
+        {
+            GameEvents.onTurnWhiteEffect.Invoke(false);
 
         }
         public void SubTendency(int tend)
@@ -115,8 +146,11 @@ namespace Controller
             else
             {
                 _instance = this;
-                DontDestroyOnLoad(gameObject);
             }
+        }
+        public void UiOpened(bool b)
+        {
+            this.isUiOpened = b;
         }
         //Função para pegar os prefabs na pasta resources
         private void GetPrefabs()
@@ -138,9 +172,9 @@ namespace Controller
         //checa se o mouse está em cima de um objeto interativo
         public void CheckInteractableObject()
         {
-            try
-            {
-                if(Physics.Raycast(MouseInfos.MousePosition(), out hitInfo, Mathf.Infinity, interactableLayer))
+            //try
+            //{
+                if (Physics.Raycast(MouseInfos.MousePosition(), out hitInfo, Mathf.Infinity, interactableLayer ) && !isUiOpened)
                 {
                     var interactable = hitInfo.collider.GetComponent<IInteractable>();
                     //verifica se onde o mouse está tem um objeto com componente interactable
@@ -175,15 +209,15 @@ namespace Controller
                     {
                         //E chamamos o método de piscar o objeto
                         if(interact.isInteractive)
-                            interact.TransitionHighLight();
+                            interact?.TransitionHighLight();
                     }
                 }
-            }
-            catch(Exception e)
-            {
-                Debug.Log(e.Message);
-                Debug.Break();
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Debug.Log(e.Message);
+            //    Debug.Break();
+            //}
         }
         /// <summary>
         /// Função que verifica a distância entre um objeto interativo, e o personagem
@@ -215,6 +249,13 @@ namespace Controller
                 interactable.isInteractive = true;
             }
         }
+        public void TurnInteractablesOff()
+        {
+            foreach (var interactable in sceneInteractables)
+            {
+                interactable.isInteractive = false;
+            }
+        }
         private void GetFlowcharts()
         {
             gameFlowCharts.AddRange(FindObjectsOfType<Flowchart>());
@@ -227,22 +268,53 @@ namespace Controller
         {
             ItemFlowChart.SetBooleanVariable(name, value);
         }
-        public void ActivateRedDoorObject()
+        public void ActivateObjectInteraction(string objName, bool b)
         {
             foreach (var interac in sceneInteractables)
             {
-                if(interac.Name == "EstanteLivrosComPortinhaPorta1")
+                if(interac.Name == objName)
                 {
-                    interac.TurnOnInteraction();
-                    Debug.Log("Estante ativada");
+                    if(b)
+                    {
+                        interac.TurnOnInteraction();
+                        Debug.Log("Objeto ativado");
+                    }
+                    else
+                    {
+                        interac.TurnOffInteraction();
+                        Debug.Log("Objeto desativado");
+                    }
                 }
             }
         }
-        public void LoadFirstScene()
+        public void DestroyInteractable(string objName)
         {
-            SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Additive);
+            foreach (var interac in sceneInteractables)
+            {
+                if (interac.Name == objName)
+                {
+                    interac.SetGoActive(false);
+                }
+            }
         }
-
+        public void LoadCorridorScene()
+        {
+            SceneManager.LoadSceneAsync("CORREDOR");
+            isInCorridor = true;
+            GameEvents.onUpdateCamPos.Invoke(CamPositions[1]);
+            TurnWhiteEffectOff();
+        }
+        public void LoadBedroomScene()
+        {
+            isInCorridor = false;
+            SceneManager.LoadSceneAsync("Quarto");
+            GameEvents.onUpdateCamPos.Invoke(CamPositions[3]);
+        }
+        public void LoadMenu()
+        {
+            SceneManager.LoadScene("MenuScreen");
+            
+        }
         public void PickupItem(string itemName, string interactableName)
         {
             foreach ( var interactable in sceneInteractables )

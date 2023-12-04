@@ -31,13 +31,13 @@ namespace Controller.Object
         {
             //transform.localScale = newScale;
             this.material.color = transparentColor;
-            //Debug.Log("Desligando parede");
+            Debug.Log("Desligando parede");
         }
         public void FadeIn()
         {
             //transform.localScale = originalScale;
             this.material.color = initialColor;
-            //Debug.Log("ligando parede");
+            Debug.Log("ligando parede");
         }
         private void TransparencyMaterials(string matName)
         {

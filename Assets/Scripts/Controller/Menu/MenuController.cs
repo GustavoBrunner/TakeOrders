@@ -2,46 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Controller;
+using Controller.Postprocessing;
 
 namespace Menu
 {
     public class MenuController : MonoBehaviour
     {
-        private GameObject initialMenu, optionsMenu, creditMenu;
+        [SerializeField]private GameObject initialMenu, optionsMenu, creditMenu, pauseMenu, CreditInGameMenu;
 
-        private List<GameObject> screens = new List<GameObject>();
+        [SerializeField]private List<GameObject> screens = new List<GameObject>();
         private GameObject actualOpenedScreen;
-        private bool m_gameStarted;
-        public bool gameStarted 
-        {
-            get => m_gameStarted;
-            set
-            {
-                if (value)
-                {
-
-                }
-            }
-        }
+        
+        [SerializeField]private bool m_gameStarted;
+        
         private void Awake()
         {
             GetMenus();
-            actualOpenedScreen = initialMenu;
-            optionsMenu.SetActive(false);
-            creditMenu.SetActive(false);
+            
+                
+            optionsMenu?.SetActive(false);
+            creditMenu?.SetActive(false);
         }
         private void Start()
         {
             MenuEvents.onChangeMenuScreen.AddListener(OpenNewScreen);
         }
+        private void Update()
+        {
+            if (m_gameStarted)
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    OpenPauseMenu();
+        }
         private void GetMenus()
         {
             initialMenu = GameObject.Find("InitialMenu");
-            screens.Add(initialMenu);
             optionsMenu = GameObject.Find("OptionsMenu");
-            screens.Add(optionsMenu);
             creditMenu = GameObject.Find("CreditsMenu");
-            screens.Add(creditMenu);
+            if(!m_gameStarted)
+            {
+                screens.Add(optionsMenu);
+                screens.Add(initialMenu);
+                screens.Add(creditMenu);
+                actualOpenedScreen = initialMenu;
+            }
         }
         private void OpenNewScreen(string screenName)
         {
@@ -51,16 +55,41 @@ namespace Menu
             {
                 if(screen.gameObject.name == nextScreen)
                 {
-                    actualOpenedScreen.SetActive(false);
+                    actualOpenedScreen?.SetActive(false);
                     actualOpenedScreen = screen;
-                    actualOpenedScreen.SetActive(true);
+                    actualOpenedScreen?.SetActive(true);
                 }
             }
         }
-        public void StartGame()
+        public void StartFadeIn()
         {
-            SceneManager.LoadScene("House");
-            SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Additive);
+            PostProcessingController.PPController.BlackEffect(true);
+            m_gameStarted = true;
+        }
+        public void CloseApp()
+        {
+            Application.Quit();
+        }
+        public void RestartGame()
+        {
+            SceneManager.LoadScene("MenuScreen");
+        }
+        private void OpenPauseMenu()
+        {
+            if (!GameController.Instance.isUiOpened)
+            {
+                pauseMenu.SetActive(true);
+                Time.timeScale = 0f;
+                actualOpenedScreen = pauseMenu;
+                GameEvents.onOpenPauseMenu.Invoke(false);
+            }
+        }
+        public void ClosePauseMenu()
+        {
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1f;
+            actualOpenedScreen = null;
+            GameEvents.onOpenPauseMenu.Invoke(true);
         }
     }
 }

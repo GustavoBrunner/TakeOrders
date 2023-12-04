@@ -15,7 +15,7 @@ namespace Controller.Object
 
         public float radius => 2f;
 
-        [SerializeField]
+        
         public bool isInteractive { get; set; }
 
         public string Name => this.gameObject.name;
@@ -62,7 +62,7 @@ namespace Controller.Object
 
         }
 
-        public void Interact()
+        public virtual void Interact()
         {
             if (this.isInteractive)
             {
@@ -138,6 +138,10 @@ namespace Controller.Object
         public List<Items> GetItems()
         {
             return this.Itens;
+        }
+        public void SetGoActive(bool status)
+        {
+            this.gameObject.SetActive(status);
         }
     }
 }

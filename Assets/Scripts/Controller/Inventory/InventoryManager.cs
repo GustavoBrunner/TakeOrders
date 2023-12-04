@@ -32,7 +32,7 @@ namespace Controller
 
         private GameObject inventoryGo;
 
-        
+        private InventoryManager instance;
         private void Awake()
         {
             inventorySlots.AddRange(GameObject.Find("ItemSlots").GetComponentsInChildren<Slot>());
@@ -63,10 +63,20 @@ namespace Controller
 
             inventoryOpened = false;
             inventoryGo = GameObject.Find("Render");
+            if(instance != null)
+            {
+                DestroyImmediate(gameObject);
+                
+            }
+            else
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            CloseInventory();
         }
         private void Start()
         {
-            CloseInventory();
             
         }
         private void Update()
@@ -140,6 +150,7 @@ namespace Controller
                 //Debug.Log(selectedObject.gameObject.name);
                 UiController.Instance.FillUiSlots(selectedObject.ItemSprite);
                 Debug.Log($"Itens equipados {equipedItems.Count}");
+                selectedObject = null;
             }
             CloseActionsWindow();
         }
@@ -173,8 +184,8 @@ namespace Controller
         } 
         public void UnequipItem()
         {
-            GameController.Instance.ChangeFlowchartBool("Equip" + selectedObject.Name.Replace(" ", ""), false);
-            equipedItems.Remove(selectedSlot.item);
+            GameController.Instance.ChangeFlowchartBool("Equip" + selectedSlot.item.Name.Replace(" ", ""), false);
+            this.equipedItems.Remove(this.selectedSlot.item);
             UiController.Instance.ClearUiSlots(selectedSlot.item.ItemSprite);
             this.selectedSlot.ClearSlot();
             Debug.Log($"Itens equipados {equipedItems.Count}");

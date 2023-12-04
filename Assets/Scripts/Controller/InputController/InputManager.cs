@@ -17,6 +17,7 @@ namespace Controller.Commands
 
         Queue<BaseCommand> commandList;
 
+        [SerializeField]
         public IInteractable interactable;
         private void Awake()
         {
@@ -35,7 +36,7 @@ namespace Controller.Commands
             {
                 if(GameController.Instance.DistanceInteractablePlayer(interactable) < 2f)
                 {
-                    interactable.Interact();
+                    interactable?.Interact();
                     interactable = null;
                 }
                 else
